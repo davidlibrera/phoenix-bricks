@@ -41,8 +41,10 @@ defmodule PhoenixBricks.MixProject do
     [
       {:credo, "~> 1.1", only: [:dev, :test], runtime: false},
       {:dialyxir, "~> 1.0", only: [:dev], runtime: false},
-      {:ecto_sql, "~> 3.4"},
-      {:ex_doc, "~> 0.22", only: :dev, runtime: false}
+      {:ecto, ">= 3.0.0"},
+      {:ecto_sql, "~> 3.4", only: :test},
+      {:ex_doc, "~> 0.22", only: :dev, runtime: false},
+      {:postgrex, ">= 0.15.0", only: :test}
     ]
   end
 
