@@ -55,12 +55,28 @@ defmodule PhoenixBricks.MixProject do
 
   defp docs do
     [
-      source_ref: "v#{@version}",
-      name: "Phoenix Bricks",
-      main: "PhoenixBricks",
       canonical: "http://hexdocs.pm/phoenix_bricks",
-      source_url: @source_url,
-      extras: ["README.md", "LICENSE.md"]
+      extras: extras(),
+      extra_section: "GUIDES",
+      groups_for_extras: groups_for_extras(),
+      main: "PhoenixBricks",
+      name: "Phoenix Bricks",
+      source_ref: "v#{@version}",
+      source_url: @source_url
+    ]
+  end
+
+  defp extras do
+    [
+      "guides/introduction/Intro.md",
+      "README.md",
+      "LICENSE.md"
+    ]
+  end
+
+  defp groups_for_extras do
+    [
+      "Introduction": ~r/guides\/introduction\/.?/
     ]
   end
 end
