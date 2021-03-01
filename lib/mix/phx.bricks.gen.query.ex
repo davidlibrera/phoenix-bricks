@@ -1,12 +1,12 @@
-defmodule Mix.Tasks.Phx.Bricks.Gen.Filter do
+defmodule Mix.Tasks.Phx.Bricks.Gen.Query do
   use Mix.Task
 
   alias Mix.PhoenixBricks.Schema
 
-  @shortdoc "Generates params filter logic for a resource"
+  @shortdoc "Generates schema filter logic for a resource"
 
   @moduledoc """
-  Generates a Filter schema around an Ecto schema
+  Generates a Query module around an Ecto
   """
 
   @switches [expand_macro: :boolean]
@@ -15,7 +15,7 @@ defmodule Mix.Tasks.Phx.Bricks.Gen.Filter do
   def run(args) do
     if Mix.Project.umbrella?() do
       Mix.raise(
-        "mix phx.bricks.gen.filter must be invoked from within your *_web application root directory"
+        "mix phx.bricks.gen.query must be invoked from within your *_web application root directory"
       )
     end
 
@@ -31,19 +31,19 @@ defmodule Mix.Tasks.Phx.Bricks.Gen.Filter do
     Schema.new(schema_name, opts)
   end
 
-  defp copy_new_files(%Schema{filter_file: file, expanded_macro: false} = schema) do
-    [{:eex, "filter.ex", file}]
+  defp copy_new_files(%Schema{query_file: file, expanded_macro: false} = schema) do
+    [{:eex, "query.ex", file}]
     |> copy_files(schema: schema)
   end
 
-  defp copy_new_files(%Schema{filter_file: file, expanded_macro: true} = schema) do
-    [{:eex, "filter_expanded.ex", file}]
+  defp copy_new_files(%Schema{query_file: file, expanded_macro: true} = schema) do
+    [{:eex, "query_expanded.ex", file}]
     |> copy_files(schema: schema)
   end
 
   defp copy_files(files, binding) do
     paths = generator_paths()
-    Mix.Phoenix.copy_from(paths, "priv/templates/phx.bricks.gen.filter", binding, files)
+    Mix.Phoenix.copy_from(paths, "priv/templates/phx.bricks.gen.query", binding, files)
   end
 
   defp validate_args!([_] = args), do: args
@@ -51,11 +51,11 @@ defmodule Mix.Tasks.Phx.Bricks.Gen.Filter do
   defp validate_args!(_) do
     Mix.raise("""
     Invalid arguments.
-    mix phx.bricks.gen.filter expects a schema module name.
+    mix phx.bricks.gen.query expects a schema module name.
     For example:
-    mix phx.bricks.gen.filter Product
-    The filter serves as schema for filter form and provides a keyword list of
-    filters parsed from params.
+    mix phx.bricks.gen.query Product
+    The query server as a module that improves an ecto query with additional
+    query components.
     """)
   end
 
