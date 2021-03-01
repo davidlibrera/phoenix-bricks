@@ -26,9 +26,9 @@ defmodule Mix.Tasks.Phx.Bricks.Gen.Filter do
   def build(args) do
     {opts, parsed} = OptionParser.parse!(args, strict: @switches)
 
-    [schema_name] = validate_args!(parsed)
+    [schema_name | filters] = validate_args!(parsed)
 
-    Schema.new(schema_name, opts)
+    Schema.new(schema_name, filters, opts)
   end
 
   defp copy_new_files(%Schema{filter_file: file, expanded_macro: false} = schema) do
@@ -46,11 +46,22 @@ defmodule Mix.Tasks.Phx.Bricks.Gen.Filter do
     Mix.Phoenix.copy_from(paths, "priv/templates/phx.bricks.gen.filter", binding, files)
   end
 
-  defp validate_args!([_] = args), do: args
+  defp validate_args!([schema_name | _filters] = args) do
+    if Schema.valid?(schema_name) do
+      args
+    else
+      raise_with_help("Schema name not valid")
+    end
+  end
 
   defp validate_args!(_) do
+    raise_with_help("Invalid arguments")
+  end
+
+  @spec raise_with_help(String.t()) :: no_return()
+  def raise_with_help(msg) do
     Mix.raise("""
-    Invalid arguments.
+    #{msg}
     mix phx.bricks.gen.filter expects a schema module name.
     For example:
     mix phx.bricks.gen.filter Product

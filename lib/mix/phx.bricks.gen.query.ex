@@ -26,9 +26,9 @@ defmodule Mix.Tasks.Phx.Bricks.Gen.Query do
   def build(args) do
     {opts, parsed} = OptionParser.parse!(args, strict: @switches)
 
-    [schema_name] = validate_args!(parsed)
+    [schema_name | filters] = validate_args!(parsed)
 
-    Schema.new(schema_name, opts)
+    Schema.new(schema_name, filters, opts)
   end
 
   defp copy_new_files(%Schema{query_file: file, expanded_macro: false} = schema) do
@@ -46,16 +46,27 @@ defmodule Mix.Tasks.Phx.Bricks.Gen.Query do
     Mix.Phoenix.copy_from(paths, "priv/templates/phx.bricks.gen.query", binding, files)
   end
 
-  defp validate_args!([_] = args), do: args
+  defp validate_args!([schema_name | _filters] = args) do
+    if Schema.valid?(schema_name) do
+      args
+    else
+      raise_with_help("Schema name not valid")
+    end
+  end
 
   defp validate_args!(_) do
+    raise_with_help("Invalid arguments")
+  end
+
+  @spec raise_with_help(String.t()) :: no_return()
+  def raise_with_help(msg) do
     Mix.raise("""
-    Invalid arguments.
-    mix phx.bricks.gen.query expects a schema module name.
+    #{msg}
+    mix phx.bricks.gen.filter expects a schema module name.
     For example:
-    mix phx.bricks.gen.query Product
-    The query server as a module that improves an ecto query with additional
-    query components.
+    mix phx.bricks.gen.filter Product
+    The filter serves as schema for filter form and provides a keyword list of
+    filters parsed from params.
     """)
   end
 

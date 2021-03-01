@@ -3,5 +3,6 @@ defmodule <%= inspect schema.module %>Filter do
 
   use PhoenixBricks.Filter,
     filters: [
+<%= schema.filters |> Enum.map(fn {name, type} -> "      #{name}: :#{type}" end) |> Enum.join(",\n") %>
     ]
 end
