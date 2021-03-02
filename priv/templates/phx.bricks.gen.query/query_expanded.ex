@@ -1,6 +1,8 @@
 defmodule <%= inspect schema.module %>Query do
   @moduledoc false
 
+  import Ecto.Query, warn: false
+
   def starting_scope do
     <%= inspect schema.module %>
   end
@@ -48,4 +50,8 @@ defmodule <%= inspect schema.module %>Query do
   defp apply_scope(query, {column, {:matches, value}}) do
     where(query, [q], ilike(field(q, ^column), ^value))
   end
-end
+<%= for {name, type} <- schema.filters do %>
+  defp apply_scope(query, {:<%= name %>, value}) do
+    apply_scope(query, {field, {matcher, value}})
+  end
+<% end %>end
