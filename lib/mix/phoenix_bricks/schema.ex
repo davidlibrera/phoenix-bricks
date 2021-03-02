@@ -8,7 +8,8 @@ defmodule Mix.PhoenixBricks.Schema do
             filter_file: nil,
             filters: nil,
             module: nil,
-            query_file: nil
+            query_file: nil,
+            queries: nil
 
   def new(schema_name, filters, opts) do
     context_app = Mix.Phoenix.context_app()
@@ -19,6 +20,7 @@ defmodule Mix.PhoenixBricks.Schema do
     query_file = Mix.Phoenix.context_lib_path(context_app, basename <> "_query.ex")
     expanded_macro = opts[:expand_macro] == true
     filters = split_filters(filters)
+    queries = generate_queries(filters)
 
     %Schema{
       context_app: context_app,
@@ -26,7 +28,8 @@ defmodule Mix.PhoenixBricks.Schema do
       filter_file: filter_file,
       filters: filters,
       module: module,
-      query_file: query_file
+      query_file: query_file,
+      queries: queries
     }
   end
 
@@ -38,5 +41,41 @@ defmodule Mix.PhoenixBricks.Schema do
     filters
     |> Enum.map(fn filter -> String.split(filter, ":") end)
     |> Enum.map(fn [field, type] -> {field, type} end)
+  end
+
+  defp generate_queries(filters) do
+    filters
+    |> Enum.map(fn {field, type} -> generate_query(field, type) end)
+  end
+
+  defp generate_query(field, type) do
+    matcher = field |> String.split("_") |> List.last()
+    column = field |> String.replace("_#{matcher}", "")
+
+    value =
+      case matcher do
+        "matches" -> "\"%\#{value}%\""
+        _ -> "value"
+      end
+
+    {
+      field,
+      type,
+      column,
+      matcher,
+      value
+    }
+  end
+
+  defp column_name(field) do
+    "name"
+  end
+
+  defp column_matcher(field) do
+    "matches"
+  end
+
+  defp column_value(field) do
+    "\"%\#{value}%\""
   end
 end

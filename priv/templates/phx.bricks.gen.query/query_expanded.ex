@@ -50,8 +50,8 @@ defmodule <%= inspect schema.module %>Query do
   defp apply_scope(query, {column, {:matches, value}}) do
     where(query, [q], ilike(field(q, ^column), ^value))
   end
-<%= for {name, type} <- schema.filters do %>
+<%= for {name, type, field, matcher, value} <- schema.queries do %>
   defp apply_scope(query, {:<%= name %>, value}) do
-    apply_scope(query, {field, {matcher, value}})
+    apply_scope(query, {:<%= field %>, {:<%= matcher %>, <%= value %>}})
   end
 <% end %>end
