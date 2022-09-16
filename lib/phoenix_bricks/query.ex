@@ -99,9 +99,16 @@ defmodule PhoenixBricks.Query do
   ```
   """
 
+  @type query :: Ecto.Query.t()
+
+  @callback apply_scope(query, atom) :: query
+
+  @optional_callbacks apply_scope: 2
+
   defmacro __using__(schema: schema) do
     quote do
       import Ecto.Query, warn: false
+      @behaviour PhoenixBricks.Query
 
       def starting_scope do
         unquote(schema)
@@ -124,7 +131,6 @@ defmodule PhoenixBricks.Query do
 
       @type query :: Ecto.Query.t()
       @spec apply_scope(query, atom() | {atom(), any()}) :: query
-
       def apply_scope(query, {column, {:eq, value}}) do
         where(query, [q], field(q, ^column) == ^value)
       end

@@ -37,8 +37,16 @@ end
  where: ilike(p0.title, ^"%a value%"), where: p0.price >= ^1000
 ```
 
-The idea is to have a query composer that could be easy to use like [ActiveRecord](https://github.com/rails/rails/tree/main/activerecord).
+If you want to add new scopes, you can add new definitions of `apply_scope/1` and `apply_scope/2`
+```elixir
+defmodule PhoenixBricks.Catalogue.ProductQuery do
+  def apply_scope(:price_gte, value) when is_numeric(value) do
+    apply_scope(:price, {:gte, value})
+  end
 
+  def apply_scope(:with_orders)
+end
+```
 
 To generate a query for the `Catalogue.Product` schema with some additional custom scopes, simply run
 ```elixir
