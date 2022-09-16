@@ -46,7 +46,7 @@ defmodule PhoenixBricks.MixProject do
       {:ecto_sql, "~> 3.4"},
       {:ex_doc, "~> 0.22", only: :dev, runtime: false},
       {:excoveralls, "~> 0.13", only: :test},
-      {:phoenix, "~> 1.5.3"}
+      {:phoenix, "~> 1.5"}
     ]
   end
 
