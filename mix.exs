@@ -3,7 +3,7 @@ defmodule PhoenixBricks.MixProject do
 
   @version "0.3.1"
   @elixir_requirements "~> 1.8"
-  @source_url "https://github.com/leanpanda-com/phoenix_bricks"
+  @source_url "https://github.com/davidlibrera/phoenix_bricks"
 
   def project do
     [
